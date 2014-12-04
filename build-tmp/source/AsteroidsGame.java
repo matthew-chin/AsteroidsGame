@@ -15,26 +15,25 @@ import java.io.IOException;
 public class AsteroidsGame extends PApplet {
 
 int starlen = (int)(Math.random()*1000);
-int astlen = (int)(Math.random()*50)+3;
+int astlen = (int)(Math.random()*21)+3;
 
 
 Asteroid[] heart = new Asteroid[astlen];
-SpaceShip vroom = new SpaceShip();
 Star[] shine = new Star[starlen];
 
+ArrayList <SpaceShip> vroom = new ArrayList <SpaceShip> ();
 ArrayList <Asteroid> Belt = new ArrayList <Asteroid> ();
-
+ArrayList <Bullet> shot = new ArrayList <Bullet>();
 
 boolean aPressed = false;
 boolean wPressed = false;
 boolean dPressed = false;
 
-public void setup() 
+public void setup()
 {
   size(600, 600);
   rectMode(CENTER);
   noStroke();
-
   for (int i = 0; i < starlen; ++i) 
   {
     shine[i] = new Star();  
@@ -44,172 +43,134 @@ public void setup()
     heart[i] = new Asteroid();
     Belt.add(heart[i]);  
   }
+  for(int i = 0; i < 3; i++)
+  {
+    vroom.add(new SpaceShip(i));
+  }
+  textAlign(CENTER);
+  textSize(72);
 }
 public void draw() 
 {
-  background(0);
-  if(wPressed){vroom.accelerate(0.1f);}
-  if(aPressed){vroom.rotate(-5);}
-  if(dPressed){vroom.rotate(5);}
-  vroom.move();
-  vroom.show();
-  for (int i = 0; i < starlen; ++i) 
+  if(vroom.size() > 0)
   {
-    shine[i].show(); 
-  }
-  for (int i = 0; i < Belt.size(); ++i) 
-  {
-    if(dist(vroom.getX(), vroom.getY(), Belt.get(i).getX(), Belt.get(i).getY()) < 20)
+    background(0);
+    if(vroom.size() > 0)
     {
-      Belt.remove(i);
-      continue;
+      if(wPressed)
+      {
+        vroom.get(0).accelerate(0.1f);
+        vroom.get(0).movedTrue();
+      }
+      if(aPressed){vroom.get(0).rotate(-5);}
+      if(dPressed){vroom.get(0).rotate(5);}
+      for(int i = 0; i < vroom.size(); i++)
+      {
+        vroom.get(i).show();
+        vroom.get(0).move();
+        if(vroom.get(0).getInvin() > 500)
+        {
+          vroom.get(0).check();
+        }
+        else
+        {
+          vroom.get(0).addInvin();
+        }
+      }
     }
-    Belt.get(i).move();
-    Belt.get(i).show();
+    for(int i = 0; i < shot.size(); i++)
+    {
+      shot.get(i).move();
+      shot.get(i).show();
+      if(shot.get(i).check(i) == 0)
+      {
+        i--;
+      }
+    }
+    for (int i = 0; i < starlen; ++i) 
+    {
+      shine[i].show(); 
+    }
+    for (int i = 0; i < Belt.size(); ++i) 
+    {
+      Belt.get(i).move();
+      Belt.get(i).show();
+      if(Belt.get(i).check(i) == 0)
+      {
+        i--;
+      }
+    }
+    if(Belt.size() == 0)
+    {
+      background((int)(Math.random()*255), (int)(Math.random()*255), (int)(Math.random()*255));
+      fill(0);
+      text("YOU WIN!!!", 300,300);
+    }
   }
+  else 
+  {
+    background(0);
+    fill(255,0,0);
+    text("you lose...", 300,300);
+  }  
 }
 
-class Asteroid extends Floater
+public void keyPressed()
 {
-  private int rotSpeed;
-  public Asteroid()
+  if(vroom.size() > 0)
   {
-    rotSpeed = (int)(Math.random()*30)-15;
-    corners = 6;
-    xCorners = new int[corners];
-    yCorners = new int[corners];
-    xCorners[0] = 10;
-    yCorners[0] = 0;
-    xCorners[1] = 4;
-    yCorners[1] = 8;
-    xCorners[2] = -4;
-    yCorners[2] = 8;
-    xCorners[3] = -10;
-    yCorners[3] = 0;
-    xCorners[4] = -4;
-    yCorners[4] = -8;
-    xCorners[5] = 4;
-    yCorners[5] = -8;
-    myColor = 140;
-    myCenterX = (int)(Math.random()*600);
-    myCenterY = (int)(Math.random()*600);
-    myDirectionX = (int)(Math.random()*10)-5;
-    myDirectionY = (int)(Math.random()*10)-5;
-    myPointDirection = 0;
-
-  }
-  public void setX(int x){myCenterX = x;}
-  public int getX(){return (int)myCenterX;}
-  public void setY(int y){myCenterY = y;}
-  public int getY(){return (int)myCenterY;}
-  public void setDirectionX(double x){myDirectionX = x;}
-  public double getDirectionX(){return myDirectionX;}
-  public void setDirectionY(double y){myDirectionY = y;}
-  public double getDirectionY(){return myDirectionY;}
-  public void setPointDirection(int degrees){myPointDirection = degrees;}
-  public double getPointDirection(){return myPointDirection;}
-  public void move()
-  {
-    rotate(rotSpeed);
-    super.move();
-  }
-}
-
-class SpaceShip extends Floater  
-{   
-  public SpaceShip()
-  {
-    corners = 4;
-
-    xCorners = new int[corners];
-    yCorners = new int[corners];
-    xCorners[0] = -8;
-    yCorners[0] = -8;
-    xCorners[1] = 16;
-    yCorners[1] = 0;
-    xCorners[2] = -8;
-    yCorners[2] = 8;
-    xCorners[3] = -2;
-    yCorners[3] = 0;
-    myColor = 255;
-    myCenterX = 300;
-    myCenterY = 300;
-    myDirectionX = 0;
-    myDirectionY = 0;
-    myPointDirection = 0;
-  }
-  public void setX(int x){myCenterX = x;}
-  public int getX(){return (int)myCenterX;}
-  public void setY(int y){myCenterY = y;}
-  public int getY(){return (int)myCenterY;}
-  public void setDirectionX(double x){myDirectionX = x;}
-  public double getDirectionX(){return myDirectionX;}
-  public void setDirectionY(double y){myDirectionY = y;}
-  public double getDirectionY(){return myDirectionY;}
-  public void setPointDirection(int degrees){myPointDirection = degrees;}
-  public double getPointDirection(){return myPointDirection;}
-}
-
-class Star
-{
-  private float x, y;
-  private int col;
-  public Star()
-  {
-    x = (float)Math.random()*600;
-    y = (float)Math.random()*600;
-    col = 255;
-  }
-  public void show()
-  {
-    fill(col);
-    rect(x,y,1,1);
+    if(key == 'w')
+    {
+      wPressed = true;
+    }
+    if(key == 'd')
+    {
+      dPressed = true;
+    }
+    if(key == 'a')
+    {
+      aPressed = true;
+    }
+    if(key == '0')
+    {
+      vroom.get(0).setX((int)(Math.random()*600));
+      vroom.get(0).setY((int)(Math.random()*600));
+      vroom.get(0).setPointDirection((int)(Math.random()*360));
+      vroom.get(0).setDirectionX(0);
+      vroom.get(0).setDirectionY(0);
+    }
+    if(key == '1')
+    {
+      if(shot.size() < 10 && (vroom.get(0).getMoved() || vroom.get(0).getInvin() > 500))
+      {
+        shot.add(new Bullet(vroom.get(0)));
+      }
+    }
+    if(key == '4'){vroom.get(0).setPointDirection(180);}
+    if(key == '6'){vroom.get(0).setPointDirection(0);}
+    if(key == '8'){vroom.get(0).setPointDirection(270);}
+    if(key == '2'){vroom.get(0).setPointDirection(90);}
   }
 }
 
 public void keyReleased()
 {
-  if(key == 'w')
+  if(vroom.size() > 0)
   {
-    wPressed = false;
-  }
-  if(key == 'd')
-  {
-    dPressed = false;
-  }
-  if(key == 'a')
-  {
-    aPressed = false;
+    if(key == 'w')
+    {
+      wPressed = false;
+    }
+    if(key == 'd')
+    {
+      dPressed = false;
+    }
+    if(key == 'a')
+    {
+      aPressed = false;
+    }
   }
 }
-public void keyPressed()
-{
-  if(key == 'w')
-  {
-    wPressed = true;
-  }
-  if(key == 'd')
-  {
-    dPressed = true;
-  }
-  if(key == 'a')
-  {
-    aPressed = true;
-  }
-  if(key == '0')
-  {
-    vroom.setX((int)(Math.random()*600));
-    vroom.setY((int)(Math.random()*600));
-    vroom.setPointDirection((int)(Math.random()*360));
-    vroom.setDirectionX(0);
-    vroom.setDirectionY(0);
-  }
-  if(key == '4'){vroom.setPointDirection(180);}
-  if(key == '6'){vroom.setPointDirection(0);}
-  if(key == '8'){vroom.setPointDirection(270);}
-  if(key == '2'){vroom.setPointDirection(90);}
-}
-
 
 abstract class Floater //Do NOT modify the Floater class! Make changes in the SpaceShip class 
 {   
@@ -272,7 +233,6 @@ abstract class Floater //Do NOT modify the Floater class! Make changes in the Sp
   public void show ()  //Draws the floater at the current position  
   {             
     fill(myColor);   
-    stroke(myColor);    
     //convert degrees to radians for sin and cos         
     double dRadians = myPointDirection*(Math.PI/180);                 
     int xRotatedTranslated, yRotatedTranslated;    
@@ -288,6 +248,199 @@ abstract class Floater //Do NOT modify the Floater class! Make changes in the Sp
   }   
 } 
 
+class Star
+{
+  private float x, y;
+  private int col;
+  public Star()
+  {
+    x = (float)Math.random()*600;
+    y = (float)Math.random()*600;
+    col = 255;
+  }
+  public void show()
+  {
+    fill(col);
+    rect(x,y,1,1);
+  }
+}
+
+class Asteroid extends Floater
+{
+  private int rotSpeed;
+  public Asteroid()
+  {
+    rotSpeed = (int)(Math.random()*30)-15;
+    corners = 6;
+    xCorners = new int[corners];
+    yCorners = new int[corners];
+    xCorners[0] = 10;
+    yCorners[0] = 0;
+    xCorners[1] = 4;
+    yCorners[1] = 8;
+    xCorners[2] = -4;
+    yCorners[2] = 8;
+    xCorners[3] = -10;
+    yCorners[3] = 0;
+    xCorners[4] = -4;
+    yCorners[4] = -8;
+    xCorners[5] = 4;
+    yCorners[5] = -8;
+    myColor = 140;
+    myCenterX = (int)(Math.random()*600);
+    myCenterY = (int)(Math.random()*600);
+    myDirectionX = (int)(Math.random()*10)-5;
+    myDirectionY = (int)(Math.random()*10)-5;
+    myPointDirection = 0;
+
+  }
+  public void setX(int x){myCenterX = x;}
+  public int getX(){return (int)myCenterX;}
+  public void setY(int y){myCenterY = y;}
+  public int getY(){return (int)myCenterY;}
+  public void setDirectionX(double x){myDirectionX = x;}
+  public double getDirectionX(){return myDirectionX;}
+  public void setDirectionY(double y){myDirectionY = y;}
+  public double getDirectionY(){return myDirectionY;}
+  public void setPointDirection(int degrees){myPointDirection = degrees;}
+  public double getPointDirection(){return myPointDirection;}
+  public void move()
+  {
+    rotate(rotSpeed);
+    super.move();
+  }
+  public int check(int a)
+  {
+    for(Bullet mold : shot)
+    {
+      if(dist((float)mold.getX(), (float)mold.getY(), (float)myCenterX, (float)myCenterY) < 10)
+      {
+        Belt.remove(a);
+        return 0;
+      }
+    }
+    return 1;
+  }
+}
+
+class SpaceShip extends Floater  
+{   
+  int count;
+  int invin;
+  boolean moved;
+  public SpaceShip(int a)
+  {
+    moved = false;
+    count = a;
+    invin = 0;
+    corners = 6;
+
+    xCorners = new int[corners];
+    yCorners = new int[corners];
+    xCorners[0] = 16;
+    yCorners[0] = 0;
+    xCorners[1] = 0;
+    yCorners[1] = 10;
+    xCorners[2] = -16;
+    yCorners[2] = 8;
+    xCorners[3] = -2;
+    yCorners[3] = 0;
+    xCorners[4] = -16;
+    yCorners[4] = -8;
+    xCorners[5] = 0;
+    yCorners[5] = -10;
+    myColor = 255;
+    myCenterX = 30*count +20;
+    myCenterY = 580;
+    myDirectionX = 0;
+    myDirectionY = 0;
+    myPointDirection = 270;
+  }
+  public boolean getMoved(){return moved;}
+  public void movedTrue(){moved = true;}
+  public int getInvin(){return invin;}
+  public void addInvin(){invin++;}
+  public void setCount(int a){count = a;}
+  public int getCount(){return count;}
+  public void setX(int x){myCenterX = x;}
+  public int getX(){return (int)myCenterX;}
+  public void setY(int y){myCenterY = y;}
+  public int getY(){return (int)myCenterY;}
+  public void setDirectionX(double x){myDirectionX = x;}
+  public double getDirectionX(){return myDirectionX;}
+  public void setDirectionY(double y){myDirectionY = y;}
+  public double getDirectionY(){return myDirectionY;}
+  public void setPointDirection(int degrees){myPointDirection = degrees;}
+  public double getPointDirection(){return myPointDirection;}
+  public void check()
+  {
+    for(Asteroid rock : Belt)
+    {
+      if(dist((float)myCenterX, (float)myCenterY, rock.getX(), rock.getY()) < 20)
+      {
+        vroom.remove(0);
+      }
+    }
+  }
+  public void show()
+  {
+    if(invin < 500)
+    {
+      myColor = 50;
+    }
+    else
+    {
+      myColor = 255;
+    }
+    super.show();
+  }
+}
+
+
+class Bullet extends Floater
+{
+  public Bullet(SpaceShip theShip)
+  {
+    myPointDirection = theShip.myPointDirection;
+    double dRadians =myPointDirection*(Math.PI/180);
+    myCenterX = theShip.myCenterX;
+    myCenterY = theShip.myCenterY;
+    myDirectionX = 5 * Math.cos(dRadians) + theShip.myDirectionX;
+    myDirectionY = 5 * Math.sin(dRadians) + theShip.myDirectionY;
+
+  }
+  public void setX(int x){myCenterX = x;}
+  public int getX(){return (int)myCenterX;}
+  public void setY(int y){myCenterY = y;}
+  public int getY(){return (int)myCenterY;}
+  public void setDirectionX(double x){myDirectionX = x;}
+  public double getDirectionX(){return myDirectionX;}
+  public void setDirectionY(double y){myDirectionY = y;}
+  public double getDirectionY(){return myDirectionY;}
+  public void setPointDirection(int degrees){myPointDirection = degrees;}
+  public double getPointDirection(){return myPointDirection;}
+  public void show()
+  {
+    noStroke();
+    fill(0,100,255);
+    ellipse((float)myCenterX, (float)myCenterY, 5.0f, 5.0f);
+  }
+  public void move()
+  {
+    myCenterX += myDirectionX;    
+    myCenterY += myDirectionY; 
+  }
+  public int check(int a)
+  {
+    if(myCenterX < 0 || myCenterX > 600 || myCenterY < 0 || myCenterY > 600)
+    {
+      shot.remove(a);
+      return 0;
+    }
+    return 1;
+  }
+
+}
   static public void main(String[] passedArgs) {
     String[] appletArgs = new String[] { "AsteroidsGame" };
     if (passedArgs != null) {
