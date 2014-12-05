@@ -1,6 +1,6 @@
 int starlen = (int)(Math.random()*1000);
-int astlen = (int)(Math.random()*21)+3;
-
+//int astlen = (int)(Math.random()*15)+3;
+int astlen = 15;
 
 Asteroid[] heart = new Asteroid[astlen];
 Star[] shine = new Star[starlen];
@@ -17,6 +17,8 @@ public void setup()
 {
   size(600, 600);
   rectMode(CENTER);
+  textAlign(CENTER);
+  textSize(72);
   noStroke();
   for (int i = 0; i < starlen; ++i) 
   {
@@ -27,20 +29,16 @@ public void setup()
     heart[i] = new Asteroid();
     Belt.add(heart[i]);  
   }
-  for(int i = 0; i < 3; i++)
+  for(int i = 0; i < 10; i++)
   {
     vroom.add(new SpaceShip(i));
   }
-  textAlign(CENTER);
-  textSize(72);
 }
 public void draw() 
 {
   if(vroom.size() > 0)
   {
     background(0);
-    if(vroom.size() > 0)
-    {
       if(wPressed)
       {
         vroom.get(0).accelerate(0.1);
@@ -51,17 +49,16 @@ public void draw()
       for(int i = 0; i < vroom.size(); i++)
       {
         vroom.get(i).show();
-        vroom.get(0).move();
-        if(vroom.get(0).getInvin() > 500)
-        {
-          vroom.get(0).check();
-        }
-        else
-        {
-          vroom.get(0).addInvin();
-        }
       }
-    }
+      vroom.get(0).move();
+      if(vroom.get(0).getInvin() > 500)
+      {
+       vroom.get(0).check();
+      }
+      else
+      {
+        vroom.get(0).addInvin();
+      }
     for(int i = 0; i < shot.size(); i++)
     {
       shot.get(i).move();
