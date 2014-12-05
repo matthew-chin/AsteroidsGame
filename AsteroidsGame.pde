@@ -1,44 +1,57 @@
-int starlen = (int)(Math.random()*1000);
-//int astlen = (int)(Math.random()*15)+3;
-int astlen = 15;
+int level = 1;
 
-Asteroid[] heart = new Asteroid[astlen];
+int starlen = (int)(Math.random()*1000);
+int astlen = 12;
+
+
+Asteroid[] heart = new Asteroid[astlen+15];
 Star[] shine = new Star[starlen];
 
 ArrayList <SpaceShip> vroom = new ArrayList <SpaceShip> ();
 ArrayList <Asteroid> Belt = new ArrayList <Asteroid> ();
 ArrayList <Bullet> shot = new ArrayList <Bullet>();
 
+boolean gameStart = false;
 boolean aPressed = false;
 boolean wPressed = false;
 boolean dPressed = false;
+int invinValue = 300;
 
 public void setup()
 {
   size(600, 600);
   rectMode(CENTER);
   textAlign(CENTER);
-  textSize(72);
   noStroke();
   for (int i = 0; i < starlen; ++i) 
   {
     shine[i] = new Star();  
   }
-  for (int i = 0; i < astlen; ++i) 
+  for (int i = 0; i < astlen+3*level; ++i) 
   {
     heart[i] = new Asteroid();
     Belt.add(heart[i]);  
   }
-  for(int i = 0; i < 10; i++)
+  for(int i = 0; i < 8; i++)
   {
     vroom.add(new SpaceShip(i));
   }
 }
 public void draw() 
 {
-  if(vroom.size() > 0)
+  background(0);
+  for (int i = 0; i < starlen; ++i) 
   {
-    background(0);
+    shine[i].show(); 
+  }
+  if(gameStart)
+  {
+    textSize(16);
+    fill(255);
+    text("Asteroids: "+(astlen+3*level), 540, 580);
+    if(vroom.size() > 0)
+    {
+
       if(wPressed)
       {
         vroom.get(0).accelerate(0.1);
@@ -51,14 +64,14 @@ public void draw()
         vroom.get(i).show();
       }
       vroom.get(0).move();
-      if(vroom.get(0).getInvin() > 500)
+      if(vroom.get(0).getInvin() > invinValue)
       {
        vroom.get(0).check();
-      }
-      else
-      {
-        vroom.get(0).addInvin();
-      }
+     }
+     else
+     {
+      vroom.get(0).addInvin();
+    }
     for(int i = 0; i < shot.size(); i++)
     {
       shot.get(i).move();
@@ -67,10 +80,6 @@ public void draw()
       {
         i--;
       }
-    }
-    for (int i = 0; i < starlen; ++i) 
-    {
-      shine[i].show(); 
     }
     for (int i = 0; i < Belt.size(); ++i) 
     {
@@ -83,21 +92,48 @@ public void draw()
     }
     if(Belt.size() == 0)
     {
-      background((int)(Math.random()*255), (int)(Math.random()*255), (int)(Math.random()*255));
-      fill(0);
-      text("YOU WIN!!!", 300,300);
+      level++;
+      if(level == 4)
+      {
+        textSize(72);
+        background(0);
+        fill(0,140,255);
+        text("You win!", 300,300);
+      }
+      else
+      {   
+        gameStart = false;
+        for (int i = 0; i < astlen+3*level; ++i) 
+        {
+          heart[i] = new Asteroid();
+          Belt.add(heart[i]);  
+        }
+
+      }
     }
   }
   else 
   {
+    textSize(72);
     background(0);
     fill(255,0,0);
     text("you lose...", 300,300);
   }  
 }
+else
+{
+  textSize(50);
+  fill(255);
+  text("Level " + level, 300,300);
+}  
+}
 
 void keyPressed()
 {
+  if(key == ' ')
+  {
+    gameStart = true;
+  }
   if(vroom.size() > 0)
   {
     if(key == 'w')
@@ -122,7 +158,7 @@ void keyPressed()
     }
     if(key == '1')
     {
-      if(shot.size() < 10 && (vroom.get(0).getMoved() || vroom.get(0).getInvin() > 500))
+      if(shot.size() < 10 && (vroom.get(0).getMoved() || vroom.get(0).getInvin() > invinValue))
       {
         shot.add(new Bullet(vroom.get(0)));
       }
@@ -365,7 +401,7 @@ class SpaceShip extends Floater
   }
   public void show()
   {
-    if(invin < 500)
+    if(invin < invinValue)
     {
       myColor = 50;
     }
