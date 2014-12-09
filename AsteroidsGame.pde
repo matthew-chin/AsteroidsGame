@@ -1,7 +1,7 @@
 int level = 1;
 
 int starlen = (int)(Math.random()*1000);
-int astlen = 12;
+int astlen = 9;
 
 
 Asteroid[] heart = new Asteroid[astlen+15];
@@ -32,7 +32,7 @@ public void setup()
     heart[i] = new Asteroid();
     Belt.add(heart[i]);  
   }
-  for(int i = 0; i < 8; i++)
+  for(int i = 0; i < 5; i++)
   {
     vroom.add(new SpaceShip(i));
   }
@@ -48,7 +48,8 @@ public void draw()
   {
     textSize(16);
     fill(255);
-    text("Asteroids: "+(astlen+3*level), 540, 580);
+    text("Asteroids: "+Belt.size(), 540, 580);
+    text("Lives: "+vroom.size(), 520, 560);
     if(vroom.size() > 0)
     {
 
@@ -93,7 +94,7 @@ public void draw()
     if(Belt.size() == 0)
     {
       level++;
-      if(level == 4)
+      if(level >= 4)
       {
         textSize(72);
         background(0);
@@ -108,7 +109,13 @@ public void draw()
           heart[i] = new Asteroid();
           Belt.add(heart[i]);  
         }
-
+        vroom.get(0).setX(30*vroom.get(0).getCount() +20);
+        vroom.get(0).setY(580);
+        vroom.get(0).setInvin(0);
+        vroom.get(0).setDirectionX(0);
+        vroom.get(0).setDirectionY(0);
+        vroom.get(0).setPointDirection(270);
+        vroom.get(0).movedFalse();
       }
     }
   }
@@ -375,7 +382,9 @@ class SpaceShip extends Floater
   }
   public boolean getMoved(){return moved;}
   public void movedTrue(){moved = true;}
+  public void movedFalse(){moved = false;}
   public int getInvin(){return invin;}
+  public void setInvin(int a){invin = a;}
   public void addInvin(){invin++;}
   public void setCount(int a){count = a;}
   public int getCount(){return count;}
