@@ -37,7 +37,6 @@ public void setup()
 {
   size(600, 600);
   rectMode(CENTER);
-  textAlign(CENTER);
   noStroke();
   for (int i = 0; i < starlen; ++i) 
   {
@@ -64,6 +63,7 @@ public void draw()
   {
     textSize(50);
     fill(255);
+    textAlign(CENTER);
     text("Level " + level, 300,300);
     
   }
@@ -71,8 +71,12 @@ public void draw()
   {
     textSize(16);
     fill(255);
-    text("Asteroids: "+Belt.size(), 540, 580);
-    text("Lives: "+vroom.size(), 520, 560);
+    textAlign(RIGHT);
+    text("Level: "+level, 585, 20);
+    text("Lives: "+vroom.size(), 585, 40);
+    if(Belt.size() < 10){text("Asteroids: "+Belt.size(), 585, 60);}
+    else{text("Asteroids: "+Belt.size(), 595, 60);}
+    
     if(vroom.size() > 0)
     {
 
@@ -119,6 +123,7 @@ public void draw()
       level++;
       if(level >= 4)
       {
+        textAlign(CENTER);
         textSize(72);
         background(0);
         fill(0,140,255);
@@ -140,6 +145,7 @@ public void draw()
   {
     textSize(72);
     background(0);
+    textAlign(CENTER);
     fill(255,0,0);
     text("you lose...", 300,300);
   }  
