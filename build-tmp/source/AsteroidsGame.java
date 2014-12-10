@@ -48,7 +48,7 @@ public void setup()
     heart[i] = new Asteroid();
     Belt.add(heart[i]);  
   }
-  for(int i = 0; i < 5; i++)
+  for(int i = 0; i < 3; i++)
   {
     vroom.add(new SpaceShip(i));
   }
@@ -60,7 +60,14 @@ public void draw()
   {
     shine[i].show(); 
   }
-  if(gameStart)
+  if(!gameStart)
+  {
+    textSize(50);
+    fill(255);
+    text("Level " + level, 300,300);
+    
+  }
+  else
   {
     textSize(16);
     fill(255);
@@ -125,13 +132,7 @@ public void draw()
           heart[i] = new Asteroid();
           Belt.add(heart[i]);  
         }
-        vroom.get(0).setX(30*vroom.get(0).getCount() +20);
-        vroom.get(0).setY(580);
-        vroom.get(0).setInvin(0);
-        vroom.get(0).setDirectionX(0);
-        vroom.get(0).setDirectionY(0);
-        vroom.get(0).setPointDirection(270);
-        vroom.get(0).movedFalse();
+        vroom.get(0).reset();
       }
     }
   }
@@ -142,12 +143,6 @@ public void draw()
     fill(255,0,0);
     text("you lose...", 300,300);
   }  
-}
-else
-{
-  textSize(50);
-  fill(255);
-  text("Level " + level, 300,300);
 }  
 }
 
@@ -351,9 +346,9 @@ class Asteroid extends Floater
   }
   public int check(int a)
   {
-    for(Bullet mold : shot)
+    for(Bullet shell : shot)
     {
-      if(dist((float)mold.getX(), (float)mold.getY(), (float)myCenterX, (float)myCenterY) < 10)
+      if(dist((float)shell.getX(), (float)shell.getY(), (float)myCenterX, (float)myCenterY) < 10)
       {
         Belt.remove(a);
         return 0;
@@ -395,6 +390,16 @@ class SpaceShip extends Floater
     myDirectionX = 0;
     myDirectionY = 0;
     myPointDirection = 270;
+  }
+  public void reset()
+  {
+    myCenterX = 30*count+20;
+    myCenterY = 580;
+    myDirectionX = 0;
+    myDirectionY = 0;
+    myPointDirection = 270;
+    invin = 0;
+    moved = false;
   }
   public boolean getMoved(){return moved;}
   public void movedTrue(){moved = true;}
